@@ -1,3 +1,4 @@
+<% If Session("username") <> "" Then %>
 <!--#include file="template.asp" -->
 <!DOCTYPE html>
 <html lang="en">
@@ -68,3 +69,10 @@
 </body>
 
 </html>
+
+
+ <% Else
+ Response.Redirect "patientList.asp"
+
+ End If
+%>

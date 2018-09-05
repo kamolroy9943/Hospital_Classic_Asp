@@ -1,4 +1,4 @@
- <!--#include file="template.asp" -->
+<!--#include file="template.asp" -->
 <!DOCTYPE html>
 <html lang="en">
 
@@ -20,10 +20,15 @@
 </head>
 
 <body>
-   <div>
-        <div><% call Template %></div>
-        
-         <!-- <div><% call BodyContent %></div> -->
+    <div>
+        <div>
+            <% call Template %>
+        </div>
+
+        <div class="text-center">
+            <% Response.write(Session("username"))%>
+        </div>
+
     </div>
 </body>
 

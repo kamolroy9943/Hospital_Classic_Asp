@@ -32,15 +32,16 @@
         </form>
     </div>
 </nav>
+
 <div>
     <div id="mySidenav" class="sidenav">
         <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
         <a href="addTestForm.asp">Test Add</a>
         <a href="testList.asp">View Test List</a>
-        <a href="patientAddForm.asp">Add Patient</a>
+        <a href="addPatientForm.asp">Add Patient</a>
         <a href="patientList.asp">Patient List</a>
         <a href="patientTestAddForm.asp">Add Patient Test</a>
-        <a href="doctorAddForm.asp">Add Doctor</a>
+        <a href="addDoctorFrom.asp">Add Doctor</a>
         <a href="doctorList.asp">Doctor List</a>
         <a href="patientTestAddForm.asp">Add Test To Patient</a>
     </div>
