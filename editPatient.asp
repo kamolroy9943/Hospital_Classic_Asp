@@ -1,4 +1,6 @@
 <!--#include file="template.asp" -->
+<!--#include file="function.asp" -->
+<% call CheckSession()%>
 <!DOCTYPE html>
 <html lang="en">
 

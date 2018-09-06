@@ -1,4 +1,5 @@
 <!--#include file="template.asp" -->
+<!--#include file="function.asp" -->
 <!DOCTYPE html>
 <html lang="en">
 
@@ -21,7 +22,7 @@
 
 <body>
 
-<%
+    <%
      If Request.form("hidden") = "1" Then
          set conn=Server.CreateObject("ADODB.Connection")
          conn.Provider="Microsoft.Jet.OLEDB.4.0"
@@ -37,51 +38,81 @@
          else                
              set rs=Server.CreateObject("ADODB.recordset")
              rs.Open "Select * FROM Admin Where Email='"&email&"' AND Password='"&password&"'", conn
-
             if not rs.EOF then
-                Session("username")= rs("Email")
-                Session("password")= rs("Password")
-                Response.redirect "index.asp"
-             Else
+                session("email")=rs("Email")
+                Response.Cookies("id")=rs("ID")
+                Response.Cookies("username")=rs("UserName")
+                response.redirect "index.asp"
+            Else
                 errorMessage="Email Or Password is Invalid !"
-             End If
-             conn.close
-         End if
+            End If
+        End if
+        conn.close
      End If
 %>
-
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-6 mx-auto" style="margin-top:20%">
-                    <div class="card">
-                        <div class="card-header bg-primary text-center">
-                            <h2>Login Here</h2>
-                        </div>
-                        <div class="card-body">
-                            <form action="login.asp" method="POST">
-                                <label class="text-danger" for=""><%=errorMessage%></label>
-                                <div class="form-group">
-                                    <input type="hidden" value="1" id="hidden" name="hidden">
-                                </div>
-                                <div class="form-group">
-                                    <label for="email">Email address</label>
-                                    <input type="email" class="form-control" value="<%=email%>" name="email" id="email" placeholder="Enter email">
-                                    <label class="text-danger" for=""><%=emailError%></label>
-                                </div>
-                                <div class="form-group">
-                                    <label for="password">Password</label>
-                                    <input type="password" class="form-control" value="<%=password%>" name="password" id="password" placeholder="Enter Password">
-                                    <label class="text-danger" for=""><%=passwordError%></label>
-                                </div>
-                                <div class="text-center">
-                                    <button class="btn-block btn-primary" type="submit" class="btn btn-primary">Submit</button>
-                                </div>
-                            </form>
-                        </div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-6 mx-auto" style="margin-top:15%">
+                <div class="card">
+                    <div class="card-header bg-primary text-center">
+                        <h2>Login Here</h2>
+                    </div>
+                    <div class="card-body">
+                        <form action="login.asp" method="POST">
+                            <div class="text-danger font-weight-bold text-center">
+                                <label for="">
+                                    <%=errorMessage%>
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <input type="hidden" value="1" id="hidden" name="hidden">
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Email address</label>
+                                <input type="email" class="form-control" value="<%=email%>" name="email" id="email"
+                                    placeholder="Enter email">
+                                <label class="text-danger" id="emailError" name="emailError" for="email">
+                                    <%=emailError%></label>
+                            </div>
+                            <div class="form-group">
+                                <label for="password">Password</label>
+                                <input type="password" class="form-control" value="<%=password%>" name="password" id="password"
+                                    placeholder="Enter Password">
+                                <label class="text-danger" id="passwordError" name="passwordError" for="">
+                                    <%=passwordError%></label>
+                            </div>
+                            <div class="form-group">
+                                <button id="submitButton" name="submitButton" onclick="return CheckValidation()" type="submit"
+                                    class="btn btn-success">LogIn</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
+    <script>
+
+        function CheckValidation() {
+            email = document.getElementById("email").value;
+            password = document.getElementById("password").value;
+
+            if (email == "" || email.length == 0) {
+                document.getElementById("emailError").innerHTML = "Please Enter the Email";
+                return false;
+            } else {
+                document.getElementById("emailError").innerHTML = "";
+            }
+
+            if (password == "" || password.length == 0) {
+                document.getElementById("passwordError").innerHTML = "Please Enter the Password";
+                return false;
+            } else {
+                document.getElementById("passwordError").innerHTML = "";
+            }
+        }
+
+    </script>
 </body>
 
 </html>

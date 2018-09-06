@@ -1,4 +1,7 @@
 <!--#include file="template.asp" -->
+<!--#include file="function.asp" -->
+<% CheckSession %>
+<% Session.Timeout = 1 %>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -24,12 +27,8 @@
         <div>
             <% call Template %>
         </div>
-
-        <div class="text-center">
-            <% Response.write(Session("username"))%>
-        </div>
-
     </div>
 </body>
 
 </html>
+

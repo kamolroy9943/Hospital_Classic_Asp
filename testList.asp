@@ -1,5 +1,6 @@
-<% If Session("username") <> "" Then %>
+<!--#include file="function.asp" -->
 <!--#include file="template.asp" -->
+<% call CheckSession()%>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -69,10 +70,4 @@
 </body>
 
 </html>
-
-
- <% Else
- Response.Redirect "patientList.asp"
-
- End If
-%>
+ 
