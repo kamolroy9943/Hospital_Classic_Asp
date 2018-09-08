@@ -58,5 +58,4 @@
     <h2 class="text-center mt-5 text-uppercase">Welcome to Modern Hospital</h2>
     <span style="font-size: 41px;cursor:pointer;position:  absolute;margin-top: -105px;" onclick="openNav()">&#9776;</span>
 </div>
-
 <% End Sub %>

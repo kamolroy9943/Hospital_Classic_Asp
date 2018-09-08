@@ -31,6 +31,8 @@
         <div class="row">
             <div class="col-md-6 mx-auto ">
               <%
+                    dim errorMessage
+                    
                     set conn=Server.CreateObject("ADODB.Connection")
                     conn.Provider="Microsoft.Jet.OLEDB.4.0"
                     conn.Open "C:\inetpub\wwwroot\hospital\hospital.mdb"
@@ -43,12 +45,15 @@
                    age= Request.Form("age")
                    phone= Request.Form("phoneNo") 
                    address= Request.Form("address") 
-                   <!-- sql="INSERT INTO Patient (PatientName,Age,Phone,Address) VALUES ('"&patientName&"',"&age&",'"&phone&"','"&address&"')" -->
-                   sql="Update Patient SET Name ='"&patientName&"', Age="&age&", Phone= '"&phone&"', Address='"&address&"' Where Id="&hiddenId&""
-                   conn.Execute sql,recaffected
-                   Response.Write("<h3 class='text-center text-success'>" & recaffected & " Record Added Successfull !</h3>")
-                   conn.close
-                   Response.Redirect "patientList.asp"
+                   If (patientName <>"" OR patientName <>null  AND  age <>"" OR age <>null  AND  phone <>"" OR phone <>null AND  address <>"" OR address <>null) Then
+                        sql="Update Patient SET Name ='"&patientName&"', Age="&age&", Phone= '"&phone&"', Address='"&address&"' Where Id="&hiddenId&""
+                        conn.Execute sql,recaffected
+                        Response.Write("<h3 class='text-center text-success'>" & recaffected & " Record Added Successfull !</h3>")
+                        conn.close
+                        Response.Redirect "patientList.asp"
+                   Else
+                        errorMessage ="Please fill up all the fields  !"
+                   End If
                 %>
             </div>
         </div>

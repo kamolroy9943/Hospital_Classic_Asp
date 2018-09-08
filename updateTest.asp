@@ -44,8 +44,7 @@
                    testType= Request.Form("testType")
                    unitPrice= Request.Form("unitPrice") 
 
-                   If((testName!="" || testName!=null) && (testType!="" || testType!=null) && (unitPrice!="" || unitPrice!=null) )
-                        <!-- sql="INSERT INTO Patient (PatientName,Age,Phone,Address) VALUES ('"&patientName&"',"&age&",'"&phone&"','"&address&"')" -->
+                   If ((testName <>"" OR testName <>null)  AND  (testType <>"" OR testType <>null)  AND  (unitPrice <>"" OR unitPrice <>null)) Then
                         sql="Update Test SET TestName ='"&testName&"', Type='"&testType&"', UnitPrice= "&unitPrice&" Where Id="&hiddenId&""
                         conn.Execute sql,recaffected
                         Response.Write("<h3 class='text-center text-success'>" & recaffected & " Record Added Successfull !</h3>")
