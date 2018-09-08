@@ -19,6 +19,9 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
         crossorigin="anonymous"></script>
     <script src="customjs.js"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.min.js"></script>
 </head>
 
 <body>
@@ -27,6 +30,25 @@
         <% call Template %>
     </div>
 
+    <%
+        If Request.form("hidden") = "1" Then
+            set conn=Server.CreateObject("ADODB.Connection")
+            conn.Provider="Microsoft.Jet.OLEDB.4.0"
+            conn.Open "C:\inetpub\wwwroot\hospital\hospital.mdb"
+
+            patientId= Request.Form("patientId")
+            testId= Request.Form("testId")
+            doctorId= Request.Form("doctorId")
+            totalAmount= Request.Form("totalAmount")
+
+            sql="INSERT INTO Patient_Test (Patientid,TestId,DoctorId,TotalAmount) VALUES ("&patientId&","&testId&","&doctorId&","&totalAmount&")"
+            'response.write(sql)
+            conn.Execute sql,recaffected
+            Response.Write("<h3 class='text-center text-success'>" & recaffected & " record added</h3>")
+            conn.close
+        End If
+    %>
+
     <div class="container">
         <div class="row">
             <div class="col-md-6 mx-auto ">
@@ -34,7 +56,10 @@
                     <div class="card-header bg-primary text-uppercase">ADD PATIENT TEST HERE</div>
                     <hr>
                     <div class="card-body">
-                        <form action="pateientTestAddResponse.asp" method="POST">
+                        <form action="patientTestAddForm.asp" method="POST">
+                            <div class="form-group">
+                                <input type="hidden" value="1" id="hidden" name="hidden">
+                            </div>
                             <div class="form-group">
                                 <label for="patientId">Patient:</label>
                                 <select class="form-control" name="patientId" id="patientId">
@@ -49,10 +74,10 @@
                         
                                         Do While Not rs.EOF
                                             %>
-                                        <option value='<%=rs("Id")%>'>
-                                            <%=rs("Name")%>
-                                        </option>
-                                        <%
+                                    <option value='<%=rs("Id")%>'>
+                                        <%=rs("Name")%>
+                                    </option>
+                                    <%
                                             rs.movenext
                                         Loop
                                         rs.close
@@ -74,10 +99,10 @@
                             
                                             Do While Not rs.EOF
                                                 %>
-                                        <option value='<%=rs("Id")%>'>
-                                            <%=rs("TestName")%>
-                                        </option>
-                                        <%
+                                    <option value='<%=rs("Id")%>'>
+                                        <%=rs("TestName")%>
+                                    </option>
+                                    <%
                                                 rs.movenext
                                             Loop
                                             rs.close
@@ -88,7 +113,7 @@
                             <div class="form-group">
                                 <label for="doctorId">Refered By:</label>
                                 <select class="form-control" name="doctorId" id="doctorId">
-                                    <option value=''>-------Select Doctor-------</option>
+                                    <option value=0>-------Select Doctor-------</option>
                                     <%
                                             set conn=Server.CreateObject("ADODB.Connection")
                                             conn.Provider="Microsoft.Jet.OLEDB.4.0"
@@ -99,10 +124,10 @@
                             
                                             Do While Not rs.EOF
                                                 %>
-                                        <option value='<%=rs("Id")%>'>
-                                            <%=rs("Name")%>
-                                        </option>
-                                        <%
+                                    <option value='<%=rs("Id")%>'>
+                                        <%=rs("Name")%>
+                                    </option>
+                                    <%
                                                 rs.movenext
                                             Loop
                                             rs.close
@@ -112,7 +137,8 @@
                             </div>
                             <div class="form-group">
                                 <label for="totalAmount">Total Amount:</label>
-                                <input type="number" class="form-control" id="totalAmount" name="totalAmount" placeholder="Enter Test Amount">
+                                <input type="number" class="form-control" value="<%=value%>" id="totalAmount" name="totalAmount"
+                                    placeholder="Enter Test Amount">
                                 <label class="text-danger" for="totalAmount" name="totalAmountErrorMsg" id="totalAmountErrorMsg"></label>
                             </div>
                             <div class="inline">
@@ -126,7 +152,39 @@
     </div>
 
     <script>
-        function CheckFormValidation(){
+        $(function (ready) {
+            $("#testId").change(function () {
+                var testId = $("#testId").val();
+                if (testId == 0) {
+                    $('#totalAmount').val(0);
+                    return;
+                }
+                $.ajax({
+                    url: 'getPriceByTestId.asp?Id=' + testId,
+                    success: function (data) {
+                        if (data)
+                            $("#totalAmount").val(data);
+                    }
+                });
+            });
+        });
+
+        // function PopulatePrice() {
+        //     var testId = document.getElementById("testId").value;
+        //     var xhttp;
+        //     xhttp = new XMLHttpRequest();
+        //     xhttp.onreadystatechange = function () {
+        //         if (this.readyState == 4 && this.status == 200) {
+        //             document.getElementById("totalAmount").value = this.responseText;
+        //         }
+        //     };
+        //     xhttp.open("GET", "getPriceByTestId.asp?Id=" + testId, true);
+        //     xhttp.send();
+        // }
+
+
+
+        function CheckFormValidation() {
             var patientId = document.getElementById("patientId").value;
             var testId = document.getElementById("testId").value;
             var doctorId = document.getElementById("doctorId").value;
@@ -135,27 +193,27 @@
             if (patientId <= 0 || patientId == NaN) {
                 document.getElementById("patientIdErrorMsg").innerHTML = "Please Select a Patient";
                 return false;
-            }else{
+            } else {
                 document.getElementById("patientIdErrorMsg").innerHTML = "";
             }
-          
-           if (testId <= 0 || testId == NaN) {
+
+            if (testId <= 0 || testId == NaN) {
                 document.getElementById("testIdErrorMsg").innerHTML = "Please Select a Test";
                 return false;
-            }else{
+            } else {
                 document.getElementById("testIdErrorMsg").innerHTML = "";
             }
-            if(doctorId<=0 || doctorId ==NaN){
+            if (doctorId <= 0 || doctorId == NaN) {
                 document.getElementById("doctorIdErrorMsg").innerHTML = "Please Select a Doctor";
                 return false;
             }
-            else{
+            else {
                 document.getElementById("doctorIdErrorMsg").innerHTML = "";
             }
-            if (totalAmount <=0 || totalAmount==NaN || totalAmount =="") {
+            if (totalAmount <= 0 || totalAmount == NaN || totalAmount == "") {
                 document.getElementById("totalAmountErrorMsg").innerHTML = "Please Give the Price.";
                 return false;
-            }else {
+            } else {
                 document.getElementById("totalAmountErrorMsg").innerHTML = "";
             }
 
