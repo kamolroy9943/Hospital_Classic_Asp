@@ -21,7 +21,6 @@
     <script src="customjs.js"></script>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.min.js"></script>
 </head>
 
 <body>
@@ -68,45 +67,27 @@
                                         set conn=Server.CreateObject("ADODB.Connection")
                                         conn.Provider="Microsoft.Jet.OLEDB.4.0"
                                         conn.Open "C:\inetpub\wwwroot\hospital\hospital.mdb"
-                                
+
                                         set rs=Server.CreateObject("ADODB.recordset")
                                         rs.Open "Select * FROM Patient", conn
-                        
+
                                         Do While Not rs.EOF
-                                            %>
+                                    %>
                                     <option value='<%=rs("Id")%>'>
                                         <%=rs("Name")%>
                                     </option>
                                     <%
-                                            rs.movenext
+                                        rs.movenext
                                         Loop
                                         rs.close
-                                        %>
+                                    %>
                                 </select>
                                 <label class="text-danger" for="patientId" id="patientIdErrorMsg" name="patientIdErrorMsg"></label>
                             </div>
                             <div class="form-group">
                                 <label for="testId">Test:</label>
                                 <select class="form-control" name="testId" id="testId">
-                                    <option value=''>-------Select Test-------</option>
-                                    <%
-                                            set conn=Server.CreateObject("ADODB.Connection")
-                                            conn.Provider="Microsoft.Jet.OLEDB.4.0"
-                                            conn.Open "C:\inetpub\wwwroot\hospital\hospital.mdb"
-                                    
-                                            set rs=Server.CreateObject("ADODB.recordset")
-                                            rs.Open "Select * FROM Test", conn
-                            
-                                            Do While Not rs.EOF
-                                                %>
-                                    <option value='<%=rs("Id")%>'>
-                                        <%=rs("TestName")%>
-                                    </option>
-                                    <%
-                                                rs.movenext
-                                            Loop
-                                            rs.close
-                                            %>
+                                    <option value=0>------- Select One -------</option>
                                 </select>
                                 <label class="text-danger" for="testId" id="testIdErrorMsg" name="testIdErrorMsg"></label>
                             </div>
@@ -166,6 +147,24 @@
                             $("#totalAmount").val(data);
                     }
                 });
+            });
+
+
+            $("#patientId").change(function () {
+                var patientId = $("#patientId").val();      
+                $("#testId").empty();
+                          
+                if (patientId <= 0) {
+                    $("#testId").empty();
+                    $("#testId").append('<option value="" >-------- Select One --------</option>')
+                }else{
+                    $.ajax({
+                        url: 'populateTestDropdown.asp',
+                        success: function (data) {
+                            $("#testId").append(data);
+                        }
+                    });
+                }
             });
         });
 
