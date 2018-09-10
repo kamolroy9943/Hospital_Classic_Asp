@@ -19,6 +19,7 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
         crossorigin="anonymous"></script>
     <script src="customjs.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 </head>
 
 <body>
@@ -30,25 +31,45 @@
     <div class="container">
         <div class="row">
 
+            <div class="pb-2 float-right">
+                <form method="POST" action="testList.asp">
+                    <input type="text" name="search" id="search" value="" placeholder="Search">
+                    <input type="submit" name="submit" value="Search">
+                </form>
+            </div>
+
             <table class="table table-border table-hover table-striped">
                 <thead class="thead-dark">
+                    <th><button type="button" name="multipleDeleteButton" id="multipleDeleteButton" class="btn btn-danger">Delete</button></th>
                     <th>Test Name</th>
                     <th>Test Type</th>
                     <th>Unit Price</th>
                     <th></th>
                     <th></th>
+                    <th></th>
                 </thead>
                 <%
+                    dim query
+
+                    searchValue = Request.Form("search")   
+
                     set conn=Server.CreateObject("ADODB.Connection")
                     conn.Provider="Microsoft.Jet.OLEDB.4.0"
                     conn.Open "C:\inetpub\wwwroot\hospital\hospital.mdb"
             
                     set rs=Server.CreateObject("ADODB.recordset")
-                    rs.Open "Select * FROM Test", conn
+                    if(searchValue = "") Then
+                        query= "Select * FROM Test"
+                    Else 
+                        query= "SELECT * FROM Test WHERE TestName LIKE '"&searchValue&"%'"
+                    End If
+
+                    rs.Open query, conn
             
                     Do While Not rs.EOF
                             id=rs("Id")
-                            response.write "<tr><td>" & rs("TestName") & "</td>"
+                            response.write "<tr id="&id&"><td><input class='checkbox' type='checkbox' value="&id&"></td>"                            
+                            response.write "<td>" & rs("TestName") & "</td>"
                             response.write "<td>" & rs("Type") & "</td>"
                             response.write "<td>" & rs("UnitPrice") & "</td>"
                             response.write "<td><a href='editTest.asp?Id="&id&"'>Edit</a></td>"
@@ -63,6 +84,40 @@
         </div>
     </div>
     <script>
+        $("#multipleDeleteButton").click(function () {
+            if (!confirm("Are you sure that you want to delete all the records?"))
+                return;
+            else {
+                var values = (function () {
+                    var a = [];
+                    $(".checkbox:checked").each(function () {
+                        a.push(this.value);
+                    });
+                    return a;
+                })()
+
+                var param = "";
+
+                for (i = 0; i < values.length; i++) {
+                    if (i != values.length) {
+                        param = param + values[i] + ",";
+                    }
+                }
+                var newStr = param.slice(0, param.length - 1);
+
+                $.ajax({
+                    method: 'GET',
+                    data: { 'data': newStr },
+                    url: 'multipleDeleteTest.asp',
+                    success: function (data) {
+                        for (i = 0; i < values.length; i++) {
+                           $("#"+values[i]).remove();
+                        }
+                    }
+                });
+            }
+        })
+
         function deleteConfirm() {
             return confirm('Do you really want to delete this location?');
         }
@@ -70,4 +125,3 @@
 </body>
 
 </html>
- 

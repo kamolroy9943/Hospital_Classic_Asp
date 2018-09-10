@@ -30,6 +30,7 @@
     <div class="container">
         <div class="row">
             <%
+
                 id=Request.QueryString("Id")                                
                 set conn=Server.CreateObject("ADODB.Connection")
                 conn.Provider="Microsoft.Jet.OLEDB.4.0"
