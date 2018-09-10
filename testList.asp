@@ -68,7 +68,7 @@
             
                     Do While Not rs.EOF
                             id=rs("Id")
-                            response.write "<tr id="&id&"><td><input class='checkbox' type='checkbox' value="&id&"></td>"                            
+                            response.write "<tr id="&id&"><td><input name='checkbox' class='checkbox' type='checkbox' value="&id&"></td>"                            
                             response.write "<td>" & rs("TestName") & "</td>"
                             response.write "<td>" & rs("Type") & "</td>"
                             response.write "<td>" & rs("UnitPrice") & "</td>"
@@ -111,7 +111,7 @@
                     url: 'multipleDeleteTest.asp',
                     success: function (data) {
                         for (i = 0; i < values.length; i++) {
-                           $("#"+values[i]).remove();
+                            $("#" + values[i]).remove();
                         }
                     }
                 });
@@ -121,6 +121,23 @@
         function deleteConfirm() {
             return confirm('Do you really want to delete this location?');
         }
+
+
+
+        ($("input[name='checkbox']").click(function () {
+
+            if ($(this).prop("checked") == true) {
+                $("#multipleDeleteButton").style.display = 'block';
+            }
+            else {
+                $("#multipleDeleteButton").style.display = 'none';
+            }
+
+        }))()
+
+        $('#cb').change(function () {
+            $("div").toggle($(this).is(':checked'));
+        });
     </script>
 </body>
 
