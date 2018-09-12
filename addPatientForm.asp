@@ -25,12 +25,10 @@
     <div>
         <% call Template %>
     </div>
-    <input type="hidden" id="fileName" value="<%=fileName%>">
     <%
         If Request.form("hidden") = "1" Then
             set conn=Server.CreateObject("ADODB.Connection")
-            conn.Provider="Microsoft.Jet.OLEDB.4.0"
-            conn.Open "C:\inetpub\wwwroot\hospital\hospital.mdb"
+            conn.open "Provider=Microsoft.Jet.OLEDB.4.0; Data Source= "& Server.MapPath("hospital.mdb")
 
             patientName= Request.Form("patientName") 
             age = Request.Form("age")
@@ -41,12 +39,11 @@
             If isnull(age) = true OR age= "" Then
                 ageError = "Age is Required." 
             Else
-                If CInt(age) = 0 Then
+                If  age = 0 Then
                     ageError = "Age should be greater than 0"
                 End If
             End If 
-            
-           
+                       
             If patientName = "" Then
                     patientError = "Test Name is Required."             
                 ElseIf phone = "" Then 
@@ -144,11 +141,6 @@
                     document.getElementById("addressErrorMsg").innerHTML = "";
                 }
             }
-
-             var value = $("#fileName").val();
-        if (value == "addPatientForm.asp") {
-            $("#addPatientForm").css('background', 'green');
-        }
         </script>
 </body>
 

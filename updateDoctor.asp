@@ -30,12 +30,9 @@
     <div class="container">
         <div class="row">
             <div class="col-md-6 mx-auto ">
-              <%
-                    set conn=Server.CreateObject("ADODB.Connection")
-                    conn.Provider="Microsoft.Jet.OLEDB.4.0"
-                    conn.Open "C:\inetpub\wwwroot\hospital\hospital.mdb"
-
-                  
+                <%
+                   set conn=Server.CreateObject("ADODB.Connection")
+                   conn.Open "Provider=Microsoft.Jet.OLEDB.4.0; Data Source=" & Server.MapPath("hospital.mdb")    
                    hiddenId= request.form("hidden")
 
                    doctorName= Request.Form("doctorName") 
@@ -56,10 +53,3 @@
 </body>
 
 </html>
-
-
-
-
-
-
- 

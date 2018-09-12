@@ -27,33 +27,32 @@
             <% call Template %>
         </div>
         <%
-    If Request.form("hidden") = "1" Then
-        set conn=Server.CreateObject("ADODB.Connection")
-        conn.Provider="Microsoft.Jet.OLEDB.4.0"
-        conn.Open "C:\inetpub\wwwroot\hospital\hospital.mdb"
+            If Request.form("hidden") = "1" Then
+                set conn=Server.CreateObject("ADODB.Connection")
+                conn.open "Provider=Microsoft.Jet.OLEDB.4.0; Data Source= "& Server.MapPath("hospital.mdb")
+                
+                doctorName= Request.Form("doctorName") 
+                email= Request.Form("email") 
+                phoneNo= Request.Form("phoneNo") 
+                designation= Request.Form("designation") 
 
-        doctorName= Request.Form("doctorName") 
-        email= Request.Form("email") 
-        phoneNo= Request.Form("phoneNo") 
-        designation= Request.Form("designation") 
-
-        If doctorName = "" Then
-        doctorNameError = "Doctor Name is Required."
-        ElseIf email = "" Then
-        emailError = "Email is Required."                
-        ElseIf phoneNo = "" Then 
-        phoneError="Contact No is Required."
-        ElseIf designation = "" Then 
-        designationError="Designation is Required."
-    else  
-        sql="INSERT INTO Doctor (Name,Email,PhoneNo,Specialization) VALUES ('"&doctorName&"','"&email&"',"&phoneNo&",'"&designation&"')"
-        conn.Execute sql,recaffected
-        Response.Write("<h3 class='text-center text-success'>" & recaffected & " record added</h3>")
-        conn.close
-        Response.Redirect "doctorList.asp"
-       End If
-    End If
-%>
+                If doctorName = "" Then
+                    doctorNameError = "Doctor Name is Required."
+                    ElseIf email = "" Then
+                    emailError = "Email is Required."                
+                    ElseIf phoneNo = "" Then 
+                    phoneError="Contact No is Required."
+                    ElseIf designation = "" Then 
+                    designationError="Designation is Required."
+                else  
+                    sql="INSERT INTO Doctor (Name,Email,PhoneNo,Specialization) VALUES ('"&doctorName&"','"&email&"',"&phoneNo&",'"&designation&"')"
+                    conn.Execute sql,recaffected
+                    Response.Write("<h3 class='text-center text-success'>" & recaffected & " record added</h3>")
+                    conn.close
+                    Response.Redirect "doctorList.asp"
+                End If
+            End If
+        %>
             <div class="container">
                 <div class="row">
                     <div class="col-md-6 mx-auto ">

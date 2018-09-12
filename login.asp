@@ -25,8 +25,8 @@
     <%
      If Request.form("hidden") = "1" Then
          set conn=Server.CreateObject("ADODB.Connection")
-         conn.Provider="Microsoft.Jet.OLEDB.4.0"
-         conn.Open "C:\inetpub\wwwroot\hospital\hospital.mdb"
+
+         conn.Open "Provider=Microsoft.Jet.OLEDB.4.0; Data Source=" & Server.MapPath("hospital.mdb")
          
          email= Request.Form("email") 
          password= Request.Form("password") 

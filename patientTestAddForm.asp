@@ -32,8 +32,7 @@
     <%
         If Request.form("hidden") = "1" Then
             set conn=Server.CreateObject("ADODB.Connection")
-            conn.Provider="Microsoft.Jet.OLEDB.4.0"
-            conn.Open "C:\inetpub\wwwroot\hospital\hospital.mdb"
+            conn.Open "Provider=Microsoft.Jet.OLEDB.4.0; Data Source=" & Server.MapPath("hospital.mdb")    
 
             patientId= Request.Form("patientId")
             testId= Request.Form("testId")
@@ -65,8 +64,7 @@
                                     <option value=''>-------Select Patient-------</option>
                                     <%
                                         set conn=Server.CreateObject("ADODB.Connection")
-                                        conn.Provider="Microsoft.Jet.OLEDB.4.0"
-                                        conn.Open "C:\inetpub\wwwroot\hospital\hospital.mdb"
+                                        conn.Open "Provider=Microsoft.Jet.OLEDB.4.0; Data Source=" & Server.MapPath("hospital.mdb")    
 
                                         set rs=Server.CreateObject("ADODB.recordset")
                                         rs.Open "Select * FROM Patient", conn
@@ -97,8 +95,7 @@
                                     <option value=0>-------Select Doctor-------</option>
                                     <%
                                             set conn=Server.CreateObject("ADODB.Connection")
-                                            conn.Provider="Microsoft.Jet.OLEDB.4.0"
-                                            conn.Open "C:\inetpub\wwwroot\hospital\hospital.mdb"
+                                            conn.Open "Provider=Microsoft.Jet.OLEDB.4.0; Data Source=" & Server.MapPath("hospital.mdb")    
                                     
                                             set rs=Server.CreateObject("ADODB.recordset")
                                             rs.Open "Select * FROM Doctor", conn
@@ -151,13 +148,13 @@
 
 
             $("#patientId").change(function () {
-                var patientId = $("#patientId").val();      
+                var patientId = $("#patientId").val();
                 $("#testId").empty();
-                          
+
                 if (patientId <= 0) {
                     $("#testId").empty();
                     $("#testId").append('<option value="" >-------- Select One --------</option>')
-                }else{
+                } else {
                     $.ajax({
                         url: 'populateTestDropdown.asp',
                         success: function (data) {
@@ -167,21 +164,6 @@
                 }
             });
         });
-
-        // function PopulatePrice() {
-        //     var testId = document.getElementById("testId").value;
-        //     var xhttp;
-        //     xhttp = new XMLHttpRequest();
-        //     xhttp.onreadystatechange = function () {
-        //         if (this.readyState == 4 && this.status == 200) {
-        //             document.getElementById("totalAmount").value = this.responseText;
-        //         }
-        //     };
-        //     xhttp.open("GET", "getPriceByTestId.asp?Id=" + testId, true);
-        //     xhttp.send();
-        // }
-
-
 
         function CheckFormValidation() {
             var patientId = document.getElementById("patientId").value;
@@ -205,8 +187,7 @@
             if (doctorId <= 0 || doctorId == NaN) {
                 document.getElementById("doctorIdErrorMsg").innerHTML = "Please Select a Doctor";
                 return false;
-            }
-            else {
+            } else {
                 document.getElementById("doctorIdErrorMsg").innerHTML = "";
             }
             if (totalAmount <= 0 || totalAmount == NaN || totalAmount == "") {
@@ -215,12 +196,6 @@
             } else {
                 document.getElementById("totalAmountErrorMsg").innerHTML = "";
             }
-
-            // if ((testName==null || testName=="") || (testType==null || testType=="") || (unitPrice==null || unitPrice==""))
-            // {
-            //     alert("Please Fill All Required Field");
-            //     return false;
-            // }
         }
     </script>
 </body>

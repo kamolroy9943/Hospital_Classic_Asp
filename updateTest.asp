@@ -30,12 +30,12 @@
     <div class="container">
         <div class="row">
             <div class="col-md-6 mx-auto ">
-              <%
+                <%
                     Dim errorMessage
 
                     set conn=Server.CreateObject("ADODB.Connection")
-                    conn.Provider="Microsoft.Jet.OLEDB.4.0"
-                    conn.Open "C:\inetpub\wwwroot\hospital\hospital.mdb"
+                    conn.open "Provider= Microsoft.Jet.OLEDB.4.0; Data Source =" & Server.MapPath("hospital.mdb")
+                     
 
                   
                    hiddenId= request.form("hidden")
@@ -61,10 +61,3 @@
 </body>
 
 </html>
-
-
-
-
-
-
- 

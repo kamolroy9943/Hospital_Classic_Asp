@@ -1,7 +1,5 @@
 <!--#include file="function.asp" -->
 <!--#include file="template.asp" -->
-
-
 <% call CheckSession()%>
 <!DOCTYPE html>
 <html lang="en">
@@ -37,7 +35,7 @@
     Dim objConn, objRS, sqlString
 
     set objConn = Server.CreateObject("ADODB.Connection")
-    objConn.Open "Provider=Microsoft.Jet.OLEDB.4.0; Data Source= C:\inetpub\wwwroot\hospital\hospital.mdb"
+    objConn.Open "Provider=Microsoft.Jet.OLEDB.4.0; Data Source=" & Server.MapPath("hospital.mdb")    
     set objRS = Server.CreateObject("ADODB.Recordset")
 
     if(searchValue = "") Then
@@ -66,7 +64,6 @@
 %>
     <div>
         <% call Template %>
-        <input type="hidden" id="fileName" value="<%=fileName%>">
     </div>
 
     <div class="container">
@@ -108,7 +105,7 @@
                     <td>
                         <%Response.Write(aResults(4,i))%>
                     </td>
-                    
+
                     <td> <a href='editTest.asp?Id=<%=aResults(0,i)%>'>Edit</a></td>
                 </tr>
                 <%
@@ -126,13 +123,10 @@
                     <% next %>
                 </ul>
             </nav>
-
-
-
         </div>
     </div>
-    <script>
 
+    <script>
         (function () {
             if ($("input:checkbox:checked").length <= 0)
                 $("#multipleDeleteButton").prop('disabled', true);
@@ -143,11 +137,6 @@
                 $("#multipleDeleteButton").prop('disabled', false);
             else
                 $("#multipleDeleteButton").prop('disabled', true);
-        }
-
-        var value = $("#fileName").val();
-        if (value == "testList.asp") {
-            $("#testList").css('background', 'green');
         }
         $("#multipleDeleteButton").click(function () {
             if (!confirm("Are you sure that you want to delete all the records?"))
@@ -174,7 +163,9 @@
 
                 $.ajax({
                     method: 'GET',
-                    data: { 'data': newStr },
+                    data: {
+                        'data': newStr
+                    },
                     url: 'multipleDeleteTest.asp',
                     success: function (data) {
                         for (i = 0; i < values.length; i++) {

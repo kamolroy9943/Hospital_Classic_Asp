@@ -32,24 +32,22 @@
 </head>
 
 <body>
+
     <div>
         <% call Template %>
     </div>
 
-
     <%
-
         Dim testError,typeError,priceError
         If Request.form("hidden") = "1" Then
             set conn=Server.CreateObject("ADODB.Connection")
-            conn.Provider="Microsoft.Jet.OLEDB.4.0"
-            conn.Open "C:\inetpub\wwwroot\hospital\hospital.mdb"
+            conn.open "Provider= Microsoft.Jet.OLEDB.4.0; Data Source=" & Server.MapPath("hospital.mdb")
             
             testName= Request.Form("testName") 
             testType= Request.Form("testType") 
             unitPrice= Request.Form("unitPrice") 
             dte= Request.Form("date") 
-Response.write date
+
             If testName = "" Then
                 testError = "Test Name is Required."
             ElseIf testType = "" Then
@@ -122,12 +120,6 @@ Response.write date
 
 
     <script>
-
-        // var value = $("#fileName").val();
-        // if (value == "addTestForm.asp") {
-        //     $("#testAddForm").css('background', 'green');
-        // }
-
         function CheckValidation() {
             var testName = document.getElementById("testName").value;
             var testType = document.getElementById("testType").value;
@@ -154,9 +146,9 @@ Response.write date
             }
         }
 
-    $(function () {
-    $("#date").datepicker();
-    });
+        $(function () {
+            $("#date").datepicker();
+        });
     </script>
 </body>
 

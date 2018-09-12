@@ -33,8 +33,7 @@
                Dim patientName,age,contactNo,address
                 id=Request.QueryString("Id")
                 set conn=Server.CreateObject("ADODB.Connection")
-                conn.Provider="Microsoft.Jet.OLEDB.4.0"
-                conn.Open "C:\inetpub\wwwroot\hospital\hospital.mdb"
+                conn.open "Provider= Microsoft.Jet.OLEDB.4.0; Data Source =" & Server.MapPath("hospital.mdb")
         
                 set rs=Server.CreateObject("ADODB.recordset")
                 rs.Open "Select * FROM Test Where Id= "&id&"", conn

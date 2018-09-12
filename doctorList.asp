@@ -28,64 +28,145 @@
     <div>
         <% call Template %>
     </div>
+    <%
+    dim query
+    pageNo = Request.QueryString("page")
+    searchValue = Request.Form("search")   
 
+    if(pageNo="")then 
+        pageNo=1
+    End If
+
+    Dim objConn, objRS, sqlString
+
+    set objConn = Server.CreateObject("ADODB.Connection")
+    objConn.Open "Provider=Microsoft.Jet.OLEDB.4.0; Data Source=" & Server.MapPath("hospital.mdb")    
+    set objRS = Server.CreateObject("ADODB.Recordset")
+
+     
+         sqlString= "Select * FROM Doctor"
+      
+    
+    objRS.Open sqlString, objConn
+    aResults = objRS.GetRows()
+    objRS.Close
+    objConn.Close
+    totalRows = Ubound(aResults,2)+1
+    rowPerPage=5
+    totalPageNumber= totalRows/rowPerPage
+    modevalue=  totalRows mod rowPerPage
+    if modevalue > 0 then 
+        totalPageNumber= Int(totalPageNumber) + 1
+    end if   
+    
+    startIndex=(rowPerPage*pageNo)-rowPerPage
+    endIndex=(rowPerPage*pageNo)-1
+    If endIndex>Ubound(aResults,2) Then
+        endIndex=Ubound(aResults,2)
+    End if
+%>
     <div class="container">
-        <div class="row">
-            <div class="mb-3" style="display: flex;float:right; margin:0px auto 0px auto;">
-                <strong>Find By Specialization: </strong>
-                <select class="form-control mt-2 ml-3" name="speciality" id="speciality">
+        <table id="myTable" class="table table-border table-hover table-striped">
+            <thead class="thead-dark">
+                <th></th>
+                <th><button type="button" name="multipleDeleteButton" id="multipleDeleteButton" class="btn btn-danger">Delete</button></th>
+                <th>Doctor Name</th>
+                <th>Email</th>
+                <th>Phone No</th>
+                <th>Specialization</th>
+                <th></th>
+                <th></th>
+            </thead>
+            <%For i=startIndex to endIndex%>
 
-                    <% set conn=Server.CreateObject("ADODB.Connection")
-                    conn.Provider="Microsoft.Jet.OLEDB.4.0"
-                    conn.Open "C:\inetpub\wwwroot\hospital\hospital.mdb"
+            <tr id="<%=aResults(0,i)%>">
+                <td>
+                    <%=i%>
+                </td>
+                <td><input name='checkbox' class='checkbox' type='checkbox' value="<%=aResults(0,i)%>" onclick="return EnableDeleteButton()"></td>
+                <td>
+                    <%Response.Write(aResults(1,i))%>
+                </td>
+                <td>
+                    <%Response.Write(aResults(2,i))%>
+                </td>
+                <td>
+                    <%Response.Write(aResults(3,i))%>
+                </td>
+                <td>
+                    <%Response.Write(aResults(4,i))%>
+                </td>
 
-                    set rs=Server.CreateObject("ADODB.recordset")
-                    rs.Open "Select Id,Specialization FROM Doctor", conn
-                    Do While Not rs.EOF %>
-                    <option value='<%=rs("Specialization")%>'>
-                        <%=rs("Specialization")%>
-                    </option>
-                    <% 
-                   rs.MoveNext
-                    Loop
-                    rs.Close
-                    conn.Close %>
-                </select>
-            </div>
-            <table id="myTable" class="table table-border table-hover table-striped">
-                <thead class="thead-dark">
-                    <th>Doctor Name</th>
-                    <th>Email</th>
-                    <th>Phone No</th>
-                    <th>Specialization</th>
-                    <th></th>
-                    <th></th>
-                </thead>
-               
-            </table>
+                <td> <a href='editDoctor.asp?Id=<%=aResults(0,i)%>'>Edit</a></td>
+            </tr>
+            <%
+        Next
+        
+        %>
+        </table>
 
-        </div>
+        <nav aria-label="...">
+            <ul class="pagination">
+                <% For i=1 to totalPageNumber %>
+                <li class="page-item"><a class="page-link" href="doctorList.asp?page=<%=i%>">
+                        <%=i%></a></li>
+                </li>
+                <% next %>
+            </ul>
+        </nav>
     </div>
-    <script>
-        function deleteConfirm() {
-            return confirm('Do you really want to delete this location?');
-        }
+</div>
 
-        $("#speciality").change(function () {
-            value = $("#speciality").val();
-            console.log(value)
+<script>
+    (function () {
+        if ($("input:checkbox:checked").length <= 0)
+            $("#multipleDeleteButton").prop('disabled', true);
+    })()
+
+    function EnableDeleteButton() {
+        if ($("input:checkbox:checked").length > 0)
+            $("#multipleDeleteButton").prop('disabled', false);
+        else
+            $("#multipleDeleteButton").prop('disabled', true);
+    }
+    $("#multipleDeleteButton").click(function () {
+        if (!confirm("Are you sure that you want to delete all the records?"))
+            return;
+        else {
+            var values = (function () {
+                var a = [];
+                $(".checkbox:checked").each(function () {
+                    a.push(this.value);
+                });
+                return a;
+            })()
+
+            var param = "";
+
+            for (i = 0; i < values.length; i++) {
+                if (i != values.length) {
+                    param = param + values[i] + ",";
+                }
+            }
+            var newStr = param.slice(0, param.length - 1);
+
+            console.log(newStr)
 
             $.ajax({
-                url: "populatedoctorList.asp?value="+value,
-                success: function (data, status) {
-                    //data.forEach(element => {
-                        $("#myTable > tbody").append(data.responseText);
-                    //});
-                    
+                method: 'GET',
+                data: {
+                    'data': newStr
+                },
+                url: 'multipleDeleteDoctor.asp',
+                success: function (data) {
+                    for (i = 0; i < values.length; i++) {
+                        $("#" + values[i]).remove();
+                    }
                 }
             });
-        })
-    </script>
+        }
+    })
+</script>
 </body>
 
 </html>

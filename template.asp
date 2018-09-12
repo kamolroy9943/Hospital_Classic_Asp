@@ -1,7 +1,7 @@
 <!--#include file="function.asp" -->
 
 <%
-    fileName = getFileName(Request.ServerVariables("SCRIPT_NAME"))
+    fileName = getFileName()
 %>
 
 
