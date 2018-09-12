@@ -1,3 +1,9 @@
+<%
+    Dim arrPath: arrPath = Split(Request.ServerVariables("SCRIPT_NAME"), "/")
+    Dim fileName: fileName = arrPath(UBound(arrPath))
+%>
+
+
 <% Sub Template %>
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <a class="navbar-brand" href="index.asp">Modern Hospital</a>
@@ -47,8 +53,8 @@
 <div>
     <div id="mySidenav" class="sidenav">
         <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-        <a href="addTestForm.asp">Test Add</a>
-        <a href="testList.asp">View Test List</a>
+        <a id="testAddForm" href="addTestForm.asp">Test Add</a>
+        <a id="testList" href="testList.asp">View Test List</a>
         <a href="addPatientForm.asp">Add Patient</a>
         <a href="patientList.asp">Patient List</a>
         <a href="patientTestAddForm.asp">Add Patient Test</a>

@@ -1,5 +1,7 @@
 <!--#include file="function.asp" -->
 <!--#include file="template.asp" -->
+
+
 <% call CheckSession()%>
 <!DOCTYPE html>
 <html lang="en">
@@ -33,6 +35,7 @@
 
             <div class="pb-2 float-right">
                 <form method="POST" action="testList.asp">
+                    <input type="hidden" id="fileName" value="<%=fileName%>">
                     <input type="text" name="search" id="search" value="" placeholder="Search">
                     <input type="submit" name="submit" value="Search">
                 </form>
@@ -84,6 +87,13 @@
         </div>
     </div>
     <script>
+        
+            var value = $("#fileName").val();
+            if(value == "testList.asp"){
+                $("#testList").css('background','green');
+            }
+    
+
         $("#multipleDeleteButton").click(function () {
             if (!confirm("Are you sure that you want to delete all the records?"))
                 return;
@@ -123,17 +133,6 @@
         }
 
 
-
-        ($("input[name='checkbox']").click(function () {
-
-            if ($(this).prop("checked") == true) {
-                $("#multipleDeleteButton").style.display = 'block';
-            }
-            else {
-                $("#multipleDeleteButton").style.display = 'none';
-            }
-
-        }))()
 
         $('#cb').change(function () {
             $("div").toggle($(this).is(':checked'));

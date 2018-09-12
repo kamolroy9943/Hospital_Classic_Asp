@@ -30,5 +30,10 @@
     </div>
 </body>
 
+
+<script>
+  var str=location.href.toLowerCase();
+  console.log(str)
+</script>
 </html>
 
