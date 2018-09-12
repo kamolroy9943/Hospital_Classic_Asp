@@ -18,4 +18,21 @@ Sub CheckSession()
         End If
     End If
 End Sub
+
+
+
+
+ 
+
+ Function getFileName(lsPath)
+
+  lsPath = Request.ServerVariables("SCRIPT_NAME")
+
+  arPath = Split(lsPath, "/")
+
+  GetFileName =arPath(UBound(arPath,1))
+
+  End Function
+
+ 
 %>  

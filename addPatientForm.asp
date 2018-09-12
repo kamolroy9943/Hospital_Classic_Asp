@@ -25,6 +25,7 @@
     <div>
         <% call Template %>
     </div>
+    <input type="hidden" id="fileName" value="<%=fileName%>">
     <%
         If Request.form("hidden") = "1" Then
             set conn=Server.CreateObject("ADODB.Connection")
@@ -143,6 +144,11 @@
                     document.getElementById("addressErrorMsg").innerHTML = "";
                 }
             }
+
+             var value = $("#fileName").val();
+        if (value == "addPatientForm.asp") {
+            $("#addPatientForm").css('background', 'green');
+        }
         </script>
 </body>
 

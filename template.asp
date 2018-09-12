@@ -1,6 +1,7 @@
+<!--#include file="function.asp" -->
+
 <%
-    Dim arrPath: arrPath = Split(Request.ServerVariables("SCRIPT_NAME"), "/")
-    Dim fileName: fileName = arrPath(UBound(arrPath))
+    fileName = getFileName(Request.ServerVariables("SCRIPT_NAME"))
 %>
 
 
@@ -37,7 +38,7 @@
                 <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown"
                     aria-haspopup="true" aria-expanded="false">
                     Welcome
-            <%=Request.Cookies("username")%>
+                    <%=Request.Cookies("username")%>
                 </button>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                     <a class="dropdown-item" href="#">Action</a>
@@ -55,8 +56,8 @@
         <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
         <a id="testAddForm" href="addTestForm.asp">Test Add</a>
         <a id="testList" href="testList.asp">View Test List</a>
-        <a href="addPatientForm.asp">Add Patient</a>
-        <a href="patientList.asp">Patient List</a>
+        <a id="addPatientForm" href="addPatientForm.asp">Add Patient</a>
+        <a id="patientList" href="patientList.asp">Patient List</a>
         <a href="patientTestAddForm.asp">Add Patient Test</a>
         <a href="addDoctorFrom.asp">Add Doctor</a>
         <a href="doctorList.asp">Doctor List</a>

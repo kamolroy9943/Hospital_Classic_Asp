@@ -66,14 +66,13 @@
 %>
     <div>
         <% call Template %>
+        <input type="hidden" id="fileName" value="<%=fileName%>">
     </div>
 
     <div class="container">
         <div class="row">
-
             <div class="pb-2 float-right">
                 <form method="POST" action="testList.asp">
-                    <input type="hidden" id="fileName" value="<%=fileName%>">
                     <input type="text" name="search" id="search" value="" placeholder="Search">
                     <input type="submit" name="submit" value="Search">
                 </form>
@@ -86,15 +85,17 @@
                     <th>Test Name</th>
                     <th>Test Type</th>
                     <th>Unit Price</th>
-                    <th>Description</th>
+                    <th>Date</th>
                     <th></th>
                     <th></th>
                 </thead>
                 <%For i=startIndex to endIndex%>
 
                 <tr id="<%=aResults(0,i)%>">
-                    <td><%=i%></td>
-                    <td><input name='checkbox' class='checkbox' type='checkbox' value="<%=aResults(0,i)%>"></td>
+                    <td>
+                        <%=i%>
+                    </td>
+                    <td><input name='checkbox' class='checkbox' type='checkbox' value="<%=aResults(0,i)%>" onclick="return EnableDeleteButton()"></td>
                     <td>
                         <%Response.Write(aResults(1,i))%>
                     </td>
@@ -107,6 +108,7 @@
                     <td>
                         <%Response.Write(aResults(4,i))%>
                     </td>
+                    
                     <td> <a href='editTest.asp?Id=<%=aResults(0,i)%>'>Edit</a></td>
                 </tr>
                 <%
@@ -125,18 +127,28 @@
                 </ul>
             </nav>
 
-            
+
 
         </div>
     </div>
     <script>
-        
-            var value = $("#fileName").val();
-            if(value == "testList.asp"){
-                $("#testList").css('background','green');
-            }
-    
 
+        (function () {
+            if ($("input:checkbox:checked").length <= 0)
+                $("#multipleDeleteButton").prop('disabled', true);
+        })()
+
+        function EnableDeleteButton() {
+            if ($("input:checkbox:checked").length > 0)
+                $("#multipleDeleteButton").prop('disabled', false);
+            else
+                $("#multipleDeleteButton").prop('disabled', true);
+        }
+
+        var value = $("#fileName").val();
+        if (value == "testList.asp") {
+            $("#testList").css('background', 'green');
+        }
         $("#multipleDeleteButton").click(function () {
             if (!confirm("Are you sure that you want to delete all the records?"))
                 return;
@@ -172,16 +184,6 @@
                 });
             }
         })
-
-        function deleteConfirm() {
-            return confirm('Do you really want to delete this location?');
-        }
-
-
-
-        $('#cb').change(function () {
-            $("div").toggle($(this).is(':checked'));
-        });
     </script>
 </body>
 

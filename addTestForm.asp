@@ -11,6 +11,9 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Welcome to Modern Hospital.</title>
     <link rel="stylesheet" href="style.css">
+
+
+
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
         crossorigin="anonymous">
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
@@ -20,10 +23,15 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
         crossorigin="anonymous"></script>
     <script src="customjs.js"></script>
+
+
+
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 </head>
 
 <body>
-
     <div>
         <% call Template %>
     </div>
@@ -40,7 +48,8 @@
             testName= Request.Form("testName") 
             testType= Request.Form("testType") 
             unitPrice= Request.Form("unitPrice") 
-
+            dte= Request.Form("date") 
+Response.write date
             If testName = "" Then
                 testError = "Test Name is Required."
             ElseIf testType = "" Then
@@ -48,7 +57,7 @@
             ElseIf unitPrice = "" Then 
                 priceError="Unit Price is Required."
             else                
-                sql="INSERT INTO Test (TestName,Type,UnitPrice) VALUES ('"&testName&"','"&testType&"',"&unitPrice&")"
+                sql="INSERT INTO Test (TestName,Type,UnitPrice,AddingDate) VALUES ('"&testName&"','"&testType&"',"&unitPrice&",'"&dte&"')"
                 conn.Execute sql,recaffected
                 Response.Write("<h3 class='text-center text-success'>" & recaffected & " record added</h3>")
                 conn.close
@@ -65,7 +74,7 @@
                     <hr>
                     <div class="card-body">
                         <form action="addTestForm.asp" method="POST" name="testAddForm">
-                                <input type="hidden" id="fileName" value="<%=fileName%>">
+                            <input type="hidden" id="fileName" value="<%=fileName%>">
                             <div class="form-group">
                                 <input type="hidden" value="1" id="hidden" name="hidden">
                             </div>
@@ -90,6 +99,14 @@
                                 <label class="text-danger" for="unitPrice" name="unitPriceErrorMsg" id="unitPriceErrorMsg">
                                     <%=priceError%></label>
                             </div>
+
+                            <div class="form-group">
+                                <label for="Date">Date:</label>
+                                <input type="text" class="form-control" id="date" name="date">
+                                <label class="text-danger" for="date" name="dateError" id="dateError">
+                                    <%=dateError%></label>
+                            </div>
+
                             <div class="inline">
                                 <button id="submitButton" name="submitButton" onclick="return CheckValidation()" type="submit"
                                     class="btn btn-success">Submit</button>
@@ -135,13 +152,11 @@
             } else {
                 document.getElementById("unitPriceErrorMsg").innerHTML = "";
             }
-
-            // if ((testName==null || testName=="") || (testType==null || testType=="") || (unitPrice==null || unitPrice==""))
-            // {
-            //     alert("Please Fill All Required Field");
-            //     return false;
-            // }
         }
+
+    $(function () {
+    $("#date").datepicker();
+    });
     </script>
 </body>
 

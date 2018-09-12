@@ -25,11 +25,35 @@
 
     <div>
         <% call Template %>
+        <input type="hidden" id="fileName" value="<%=fileName%>">
     </div>
 
     <div class="container">
         <div class="row">
+            <form class="mt-5 mb-4" align="center" method="POST" action="patientList.asp">
+                <div class="row">
+                    <div class="col">
+                        <strong>Name</strong>
+                        <input type="text" class="form-control" name="patientName" placeholder="Enter Name">
+                    </div>
+                    <div class="col">
+                        <strong>Address:</strong>
+                        <input type="text" class="form-control" name="address" placeholder="Enter Address">
+                    </div>
+                    <div class="col inline">
+                        <strong>Age From:</strong>
+                        <input type="number" class="form-control" name="fromAge" placeholder="Enter From Number">
+                    </div>
+                    <div class="col">
+                        <strong>Age To:</strong>
+                        <input type="number" class="form-control" name="toAge" placeholder="Enter To Number">
+                    </div>
+                    <div class="col">
 
+                        <button class="btn btn-primary mt-4" type="submit">Search</button>
+                    </div>
+                </div>
+            </form>
             <table class="table table-border table-hover table-striped">
                 <thead class="thead-dark">
                     <th>Patient Name</th>
@@ -43,10 +67,29 @@
                             set conn=Server.CreateObject("ADODB.Connection")
                             conn.Provider="Microsoft.Jet.OLEDB.4.0"
                             conn.Open "C:\inetpub\wwwroot\hospital\hospital.mdb"
-                    
+
+                            name = Request.Form("patientName")
+                            address= Request.Form("address")
+                            fromAge= Request.Form("fromAge")
+                            toAge= Request.Form("toAge")
+ 
+                        Dim query
+
+                        if(name<>"" And address <>"" and fromAge <>"" And toAge <>"")Then
+                            query ="Select * FROM Patient Where (Name LIKE  '"&name&"%' OR Address LIKE '"&address&"%') AND (Age BETWEEN "&fromAge&" AND "&toAge&")"
+                        elseif(name<>"" And address ="" and fromAge ="" And toAge ="")Then
+                            query ="Select * FROM Patient Where Name LIKE  '"&name&"%'"
+                        elseif(name="" And address <>"" and fromAge ="" And toAge ="")Then 
+                            query ="Select * FROM Patient Where Address LIKE  '"&address&"%'"
+                        elseif(name="" And address ="" and fromAge <>"" And toAge <>"")Then 
+                            query ="Select * FROM Patient Where Age BETWEEN "&fromAge&" AND "&toAge&""
+                        else
+                        query ="Select * FROM Patient"
+
+                        end if
                             set rs=Server.CreateObject("ADODB.recordset")
-                            rs.Open "Select * FROM Patient", conn
-                    
+                            rs.Open query, conn
+
                             Do While Not rs.EOF
                                     id=rs("Id")
                                     response.write "<tr><td>" & rs("Name") & "</td>"
@@ -68,8 +111,14 @@
 
     <script>
         function deleteConfirm() {
-            return confirm('Do you really want to delete this location?');  
+            return confirm('Do you really want to delete this location?');
         }
+
+        var value = $("#fileName").val();
+        if (value == "patientList.asp") {
+            $("#patientList").css('background', 'green');
+        }
+
     </script>
 </body>
 
