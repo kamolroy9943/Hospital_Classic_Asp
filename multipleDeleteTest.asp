@@ -5,7 +5,7 @@
     conn.Open "C:\inetpub\wwwroot\hospital\hospital.mdb"
 
     set rs=Server.CreateObject("ADODB.recordset")
-    sql = "Delete FROM Test Where Id IN("&Id&")"
+    sql = "Delete FROM Test Where Id IN("&id&")"
     conn.Execute sql,recaffected
     conn.Close 
 %>

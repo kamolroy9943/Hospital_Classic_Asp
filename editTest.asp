@@ -31,9 +31,7 @@
         <div class="row">
             <%
                Dim patientName,age,contactNo,address
-
                 id=Request.QueryString("Id")
-                                
                 set conn=Server.CreateObject("ADODB.Connection")
                 conn.Provider="Microsoft.Jet.OLEDB.4.0"
                 conn.Open "C:\inetpub\wwwroot\hospital\hospital.mdb"
@@ -47,39 +45,40 @@
                 rs.Close
                 conn.Close 
            %>
-                <div class="col-md-6 mx-auto ">
-                    <div class="card">
-                        <div class="card-header bg-primary test-upercase">ADD PATIENT HERE</div>
-                        <hr>
-                        <div class="card-body">
-                            <form action="updateTest.asp" method="POST">
-                                <div class="form-group">
-                                    <input type="hidden" value="<%=id%>" id="hidden" name="hidden">
-                                </div>
-                                <div class="form-group">
-                                    <label for="firstName">Test Name:</label>
-                                    <input type="text" class="form-control" value="<%=testName%>" id="testName" name="testName" placeholder="Enter Test Name.">
-                                </div>
-                                <div class="form-group">
-                                    <label for="lastName">Test Type:</label>
-                                    <input type="text" class="form-control" value="<%=testType%>" id="testType" name="testType" placeholder="Enter Test Type.">
-                                </div>
-                                <div class="form-group">
-                                    <label for="lastName">Unit Price:</label>
-                                    <input type="number" class="form-control" value="<%=unitPrice%>" id="unitPrice" name="unitPrice" placeholder="Enter your email">
-                                </div>
-                                <div class="inline">
-                                    <button type="submit" class="btn btn-success">Submit</button>
-                                    <a href="testList.asp" class="btn btn-info">View Test List</a>
-                                </div>
-                            </form>
-                        </div>
+            <div class="col-md-6 mx-auto ">
+                <div class="card">
+                    <div class="card-header bg-primary test-upercase">ADD PATIENT HERE</div>
+                    <hr>
+                    <div class="card-body">
+                        <form action="updateTest.asp" method="POST">
+                            <div class="form-group">
+                                <input type="hidden" value="<%=id%>" id="hidden" name="hidden">
+                            </div>
+                            <div class="form-group">
+                                <label for="firstName">Test Name:</label>
+                                <input type="text" class="form-control" value="<%=testName%>" id="testName" name="testName"
+                                    placeholder="Enter Test Name.">
+                            </div>
+                            <div class="form-group">
+                                <label for="lastName">Test Type:</label>
+                                <input type="text" class="form-control" value="<%=testType%>" id="testType" name="testType"
+                                    placeholder="Enter Test Type.">
+                            </div>
+                            <div class="form-group">
+                                <label for="lastName">Unit Price:</label>
+                                <input type="number" class="form-control" value="<%=unitPrice%>" id="unitPrice" name="unitPrice"
+                                    placeholder="Enter your email">
+                            </div>
+                            <div class="inline">
+                                <button type="submit" class="btn btn-success">Submit</button>
+                                <a href="testList.asp" class="btn btn-info">View Test List</a>
+                            </div>
+                        </form>
                     </div>
                 </div>
+            </div>
         </div>
     </div>
-
-
 </body>
 
 </html>

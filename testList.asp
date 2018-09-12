@@ -25,7 +25,45 @@
 </head>
 
 <body>
+    <%
+    dim query
+    pageNo = Request.QueryString("page")
+    searchValue = Request.Form("search")   
 
+    if(pageNo="")then 
+        pageNo=1
+    End If
+
+    Dim objConn, objRS, sqlString
+
+    set objConn = Server.CreateObject("ADODB.Connection")
+    objConn.Open "Provider=Microsoft.Jet.OLEDB.4.0; Data Source= C:\inetpub\wwwroot\hospital\hospital.mdb"
+    set objRS = Server.CreateObject("ADODB.Recordset")
+
+    if(searchValue = "") Then
+         sqlString= "Select * FROM Test"
+    Else 
+         sqlString= "SELECT * FROM Test WHERE TestName LIKE '"&searchValue&"%'"
+    End If     
+    
+    objRS.Open sqlString, objConn
+    aResults = objRS.GetRows()
+    objRS.Close
+    objConn.Close
+    totalRows = Ubound(aResults,2)+1
+    rowPerPage=5
+    totalPageNumber= totalRows/rowPerPage
+    modevalue=  totalRows mod rowPerPage
+    if modevalue > 0 then 
+        totalPageNumber= Int(totalPageNumber) + 1
+    end if   
+    
+    startIndex=(rowPerPage*pageNo)-rowPerPage
+    endIndex=(rowPerPage*pageNo)-1
+    If endIndex>Ubound(aResults,2) Then
+        endIndex=Ubound(aResults,2)
+    End if
+%>
     <div>
         <% call Template %>
     </div>
@@ -43,46 +81,51 @@
 
             <table class="table table-border table-hover table-striped">
                 <thead class="thead-dark">
+                    <th></th>
                     <th><button type="button" name="multipleDeleteButton" id="multipleDeleteButton" class="btn btn-danger">Delete</button></th>
                     <th>Test Name</th>
                     <th>Test Type</th>
                     <th>Unit Price</th>
-                    <th></th>
+                    <th>Description</th>
                     <th></th>
                     <th></th>
                 </thead>
+                <%For i=startIndex to endIndex%>
+
+                <tr id="<%=aResults(0,i)%>">
+                    <td><%=i%></td>
+                    <td><input name='checkbox' class='checkbox' type='checkbox' value="<%=aResults(0,i)%>"></td>
+                    <td>
+                        <%Response.Write(aResults(1,i))%>
+                    </td>
+                    <td>
+                        <%Response.Write(aResults(2,i))%>
+                    </td>
+                    <td>
+                        <%Response.Write(aResults(3,i))%>
+                    </td>
+                    <td>
+                        <%Response.Write(aResults(4,i))%>
+                    </td>
+                    <td> <a href='editTest.asp?Id=<%=aResults(0,i)%>'>Edit</a></td>
+                </tr>
                 <%
-                    dim query
-
-                    searchValue = Request.Form("search")   
-
-                    set conn=Server.CreateObject("ADODB.Connection")
-                    conn.Provider="Microsoft.Jet.OLEDB.4.0"
-                    conn.Open "C:\inetpub\wwwroot\hospital\hospital.mdb"
-            
-                    set rs=Server.CreateObject("ADODB.recordset")
-                    if(searchValue = "") Then
-                        query= "Select * FROM Test"
-                    Else 
-                        query= "SELECT * FROM Test WHERE TestName LIKE '"&searchValue&"%'"
-                    End If
-
-                    rs.Open query, conn
-            
-                    Do While Not rs.EOF
-                            id=rs("Id")
-                            response.write "<tr id="&id&"><td><input name='checkbox' class='checkbox' type='checkbox' value="&id&"></td>"                            
-                            response.write "<td>" & rs("TestName") & "</td>"
-                            response.write "<td>" & rs("Type") & "</td>"
-                            response.write "<td>" & rs("UnitPrice") & "</td>"
-                            response.write "<td><a href='editTest.asp?Id="&id&"'>Edit</a></td>"
-                            response.write "<td><a onclick='return deleteConfirm()' href='deleteTest.asp?Id="&id&"'>Delete</a></td></tr>"
-                    rs.MoveNext
-                    Loop
-                    rs.Close
-                    conn.Close  
-                 %>
+			Next
+			
+			%>
             </table>
+
+            <nav aria-label="...">
+                <ul class="pagination">
+                    <% For i=1 to totalPageNumber %>
+                    <li class="page-item"><a class="page-link" href="testList.asp?page=<%=i%>">
+                            <%=i%></a></li>
+                    </li>
+                    <% next %>
+                </ul>
+            </nav>
+
+            
 
         </div>
     </div>
@@ -114,6 +157,8 @@
                     }
                 }
                 var newStr = param.slice(0, param.length - 1);
+
+                console.log(newStr)
 
                 $.ajax({
                     method: 'GET',

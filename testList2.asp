@@ -109,3 +109,53 @@
 </body>
 
 </html>
+
+
+
+
+
+
+<!-- <table class="table table-border table-hover table-striped">
+                <thead class="thead-dark">
+                    <th><button type="button" name="multipleDeleteButton" id="multipleDeleteButton" class="btn btn-danger">Delete</button></th>
+                    <th>Test Name</th>
+                    <th>Test Type</th>
+                    <th>Unit Price</th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                </thead>
+                <%
+                    dim query
+
+                   searchValue = Request.Form("search")   
+
+                    set conn=Server.CreateObject("ADODB.Connection")
+                    conn.Provider="Microsoft.Jet.OLEDB.4.0"
+                    conn.Open "C:\inetpub\wwwroot\hospital\hospital.mdb"
+            
+                    set rs=Server.CreateObject("ADODB.recordset")
+                    if(searchValue = "") Then
+                        query= "Select * FROM Test"
+                    Else 
+                        query= "SELECT * FROM Test WHERE TestName LIKE '"&searchValue&"%'"
+                    End If
+
+                    rs.Open query, conn
+            
+                    Do While Not rs.EOF
+                            id=rs("Id")
+                            response.write "<tr id="&id&"><td><input name='checkbox' class='checkbox' type='checkbox' value="&id&"></td>"                            
+                            response.write "<td>" & rs("TestName") & "</td>"
+                            response.write "<td>" & rs("Type") & "</td>"
+                            response.write "<td>" & rs("UnitPrice") & "</td>"
+                            response.write "<td><a href='editTest.asp?Id="&id&"'>Edit</a></td>"
+                            response.write "<td><a onclick='return deleteConfirm()' href='deleteTest.asp?Id="&id&"'>Delete</a></td></tr>"
+                    rs.MoveNext
+                    Loop
+                    rs.Close
+                    conn.Close  
+                 %>
+            </table> -->
+
+
