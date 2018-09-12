@@ -19,6 +19,8 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
         crossorigin="anonymous"></script>
     <script src="customjs.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
 </head>
 
 <body>
@@ -29,48 +31,60 @@
 
     <div class="container">
         <div class="row">
-        
-                <table class="table table-border table-hover table-striped">
-                    <thead class="thead-dark">
-                        <th>Doctor Name</th>
-                        <th>Email</th>
-                        <th>Phone No</th>
-                        <th>Specialization</th>
-                        <th></th>
-                        <th></th>
-                    </thead>
-                    <%
-                            set conn=Server.CreateObject("ADODB.Connection")
-                            conn.Provider="Microsoft.Jet.OLEDB.4.0"
-                            conn.Open "C:\inetpub\wwwroot\hospital\hospital.mdb"
-                    
-                            set rs=Server.CreateObject("ADODB.recordset")
-                            rs.Open "Select * FROM Doctor", conn
-                    
-                            Do While Not rs.EOF
-                                    id=rs("Id")
-                                    response.write "<tr><td>" & rs("Name") & "</td>"
-                                    response.write "<td>" & rs("Email") & "</td>"
-                                    response.write "<td>" & rs("PhoneNo") & "</td>"
-                                    response.write "<td>" & rs("Specialization") & "</td>"
-                                    response.write "<td><a href='editDoctor.asp?Id="&id&"'>Edit</a></td>"
-                                    response.write "<td><a onclick=' return deleteConfirm()' href='deleteDoctor.asp?Id="&id&"'>Delete</a></td></tr>"
-                            rs.MoveNext
-                            Loop
-                            rs.Close
-                            conn.Close                   
-                       %>
-                </table>
-             
+            <div class="mb-3" style="display: flex;float:right; margin:0px auto 0px auto;">
+                <strong>Find By Specialization: </strong>
+                <select class="form-control mt-2 ml-3" name="speciality" id="speciality">
+
+                    <% set conn=Server.CreateObject("ADODB.Connection")
+                    conn.Provider="Microsoft.Jet.OLEDB.4.0"
+                    conn.Open "C:\inetpub\wwwroot\hospital\hospital.mdb"
+
+                    set rs=Server.CreateObject("ADODB.recordset")
+                    rs.Open "Select Id,Specialization FROM Doctor", conn
+                    Do While Not rs.EOF %>
+                    <option value='<%=rs("Specialization")%>'>
+                        <%=rs("Specialization")%>
+                    </option>
+                    <% 
+                   rs.MoveNext
+                    Loop
+                    rs.Close
+                    conn.Close %>
+                </select>
+            </div>
+            <table id="myTable" class="table table-border table-hover table-striped">
+                <thead class="thead-dark">
+                    <th>Doctor Name</th>
+                    <th>Email</th>
+                    <th>Phone No</th>
+                    <th>Specialization</th>
+                    <th></th>
+                    <th></th>
+                </thead>
+               
+            </table>
+
         </div>
     </div>
-
-
-   
     <script>
         function deleteConfirm() {
-            return confirm('Do you really want to delete this location?');  
+            return confirm('Do you really want to delete this location?');
         }
+
+        $("#speciality").change(function () {
+            value = $("#speciality").val();
+            console.log(value)
+
+            $.ajax({
+                url: "populatedoctorList.asp?value="+value,
+                success: function (data, status) {
+                    //data.forEach(element => {
+                        $("#myTable > tbody").append(data.responseText);
+                    //});
+                    
+                }
+            });
+        })
     </script>
 </body>
 

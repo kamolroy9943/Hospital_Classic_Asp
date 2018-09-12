@@ -123,10 +123,10 @@ Response.write date
 
     <script>
 
-        var value = $("#fileName").val();
-        if (value == "addTestForm.asp") {
-            $("#testAddForm").css('background', 'green');
-        }
+        // var value = $("#fileName").val();
+        // if (value == "addTestForm.asp") {
+        //     $("#testAddForm").css('background', 'green');
+        // }
 
         function CheckValidation() {
             var testName = document.getElementById("testName").value;

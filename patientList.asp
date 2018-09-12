@@ -36,6 +36,7 @@
                         <strong>Name</strong>
                         <input type="text" class="form-control" name="patientName" placeholder="Enter Name">
                     </div>
+                    
                     <div class="col">
                         <strong>Address:</strong>
                         <input type="text" class="form-control" name="address" placeholder="Enter Address">

@@ -54,13 +54,13 @@
 <div>
     <div id="mySidenav" class="sidenav">
         <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-        <a id="testAddForm" href="addTestForm.asp">Test Add</a>
-        <a id="testList" href="testList.asp">View Test List</a>
-        <a id="addPatientForm" href="addPatientForm.asp">Add Patient</a>
-        <a id="patientList" href="patientList.asp">Patient List</a>
-        <a href="patientTestAddForm.asp">Add Patient Test</a>
-        <a href="addDoctorFrom.asp">Add Doctor</a>
-        <a href="doctorList.asp">Doctor List</a>
+        <a id="testAddForm" href="addTestForm.asp" <%if instr(fileName, "addTestForm" ) > 0 then %> style="background: green;" <%End if%> >Test Add</a>
+        <a id="testList" href="testList.asp" <%if instr(fileName, "testList" ) > 0 then %> style="background: green;" <%End if%>>View Test List</a>
+        <a id="addPatientForm" href="addPatientForm.asp" <%if instr(fileName, "addPatientForm" ) > 0 then %> style="background: green;" <%End if%>>Add Patient</a>
+        <a id="patientList" href="patientList.asp" <%if instr(fileName, "patientList" ) > 0 then %> style="background: green;" <%End if%>>Patient List</a>
+        <a href="patientTestAddForm.asp" <%if instr(fileName, "patientTestAddForm" ) > 0 then %> style="background: green;" <%End if%>>Add Patient Test</a>
+        <a href="addDoctorFrom.asp" <%if instr(fileName, "addDoctorFrom" ) > 0 then %> style="background: green;" <%End if%>>Add Doctor</a>
+        <a href="doctorList.asp" <%if instr(fileName, "doctorList" ) > 0 then %> style="background: green;" <%End if%>>Doctor List</a>
     </div>
     <h2 class="text-center mt-5 text-uppercase">Welcome to Modern Hospital</h2>
     <span style="font-size: 41px;cursor:pointer;position:  absolute;margin-top: -105px;" onclick="openNav()">&#9776;</span>
