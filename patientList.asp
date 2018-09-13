@@ -27,46 +27,108 @@
     <div>
         <% call Template %>
     </div>
-
     <%
-    dim query
-    pageNo = Request.QueryString("page")
-    searchValue = Request.Form("search")   
+    name=Request.Form("name")
+    address=Request.Form("address")
+    fromAge=Request.Form("fromAge")
+    toAge=Request.Form("toAge")
 
+    pageNo = Request.Form("hidden")
+    response.write pageNo
     if(pageNo="")then 
         pageNo=1
     End If
+    response.write(pageNo)
 
     Dim objConn, objRS, sqlString
-
     set objConn = Server.CreateObject("ADODB.Connection")
     objConn.Open "Provider=Microsoft.Jet.OLEDB.4.0; Data Source=" & Server.MapPath("hospital.mdb")    
     set objRS = Server.CreateObject("ADODB.Recordset")
+    
+    dim where 
+    sqlString = "Select * From Patient "
+    if name<>"" Then
+        where = where  + "Where Name Like '"&name&"%' "
+    End If
+    
+    if address <> "" Then
+        if instr(where, "where")<0 Then
+            where = where  + "Where Address Like '"&address&"%' " 
+        else
+            where = where  + "AND Address Like '"&address&"%' "
+        End If       
+        
+    End If
 
-   
-         sqlString= "Select * FROM Patient"
-     
+    if fromAge <>"" Then
+        if instr(where, "where")<0 Then
+            where = where  + "WHERE Age >="&fromAge&""
+        else
+            where = where  + "And Age >="&fromAge&""
+        End If            
+    End If
+    
+    if toAge <>"" Then
+        if instr(where, "where")<0 Then
+            where = where  + "Where Age <= "&toAge&""
+        else
+            where = where  + "AND Age <= "&toAge&""
+        End If
+    End If    
+    
+    sqlString=sqlString+where
+
+    
+    
+    response.write sqlString
     
     objRS.Open sqlString, objConn
-    aResults = objRS.GetRows()
-    objRS.Close
-    objConn.Close
-    totalRows = Ubound(aResults,2)+1
-    rowPerPage=5
-    totalPageNumber= totalRows/rowPerPage
-    modevalue=  totalRows mod rowPerPage
-    if modevalue > 0 then 
-        totalPageNumber= Int(totalPageNumber) + 1
-    end if   
+    If objRS.EOF = false Then
+
+        aResults = objRS.GetRows()
     
-    startIndex=(rowPerPage*pageNo)-rowPerPage
-    endIndex=(rowPerPage*pageNo)-1
-    If endIndex>Ubound(aResults,2) Then
-        endIndex=Ubound(aResults,2)
+    
+        objRS.Close
+        objConn.Close
+        totalRows = Ubound(aResults,2)+1
+        rowPerPage=5
+        totalPageNumber= totalRows/rowPerPage
+        modevalue=  totalRows mod rowPerPage
+        if modevalue > 0 then 
+            totalPageNumber= Int(totalPageNumber) + 1
+        end if   
+        
+        startIndex=(rowPerPage*pageNo)-rowPerPage
+        endIndex=(rowPerPage*pageNo)-1
+        If endIndex>Ubound(aResults,2) Then
+            endIndex=Ubound(aResults,2)
+        End if
     End if
 %>
     <div class="container">
-        <div class="row">      
+        <div class="row">
+            <form action="patientList.asp" method="POST" id="search">
+                <input type="hidden" name="hidden" id="hidden">
+                <div class="float-right mb-2 mt-5" style="display:flex">
+                    <div class="mr-2">
+                        <strong>PatientName: </strong>
+                        <input type="text" name="name" id="name" value="<%=name%>">
+                    </div>
+                    <div class="mr-2">
+                        <strong>Address:</strong>
+                        <input type="text" name="address" id="address" value="<%=address%>">
+                    </div>
+                    <div class="mr-2">
+                        <strong>From Age: </strong>
+                        <input type="number" name="fromAge" id="fromDate" value="<%=fromAge%>">
+                    </div>
+                    <div class="mr-2">
+                        <strong>ToAge: </strong>
+                        <input type="number" name="toAge" id="toDate" value="<%=toAge%>">
+                    </div>
+                    <button class="btn btn-primary">Search</button>
+                </div>
+            </form>
             <table class="table table-border table-hover table-striped">
                 <thead class="thead-dark">
                     <th></th>
@@ -76,13 +138,13 @@
                     <th>Phone No</th>
                     <th>Address</th>
                     <th></th>
-                    
+
                 </thead>
                 <%For i=startIndex to endIndex%>
 
                 <tr id="<%=aResults(0,i)%>">
                     <td>
-                        <%=i%>
+                        <%=i+1%>
                     </td>
                     <td><input name='checkbox' class='checkbox' type='checkbox' value="<%=aResults(0,i)%>" onclick="return EnableDeleteButton()"></td>
                     <td>
@@ -109,7 +171,7 @@
             <nav aria-label="...">
                 <ul class="pagination">
                     <% For i=1 to totalPageNumber %>
-                    <li class="page-item"><a class="page-link" href="patientList.asp?page=<%=i%>">
+                    <li class="page-item"><a class="page-link" onclick="javascript:gopage(<%=i%>)">
                             <%=i%></a></li>
                     </li>
                     <% next %>
@@ -117,57 +179,69 @@
             </nav>
         </div>
     </div>
-   
+
+    '
+    <!-- href="patientList.asp?page=<%=i%>" -->
+
+
     <script>
-            (function () {
-                if ($("input:checkbox:checked").length <= 0)
-                    $("#multipleDeleteButton").prop('disabled', true);
-            })()
-    
-            function EnableDeleteButton() {
-                if ($("input:checkbox:checked").length > 0)
-                    $("#multipleDeleteButton").prop('disabled', false);
-                else
-                    $("#multipleDeleteButton").prop('disabled', true);
-            }
-            $("#multipleDeleteButton").click(function () {
-                if (!confirm("Are you sure that you want to delete all the records?"))
-                    return;
-                else {
-                    var values = (function () {
-                        var a = [];
-                        $(".checkbox:checked").each(function () {
-                            a.push(this.value);
-                        });
-                        return a;
-                    })()
-    
-                    var param = "";
-    
-                    for (i = 0; i < values.length; i++) {
-                        if (i != values.length) {
-                            param = param + values[i] + ",";
+        (function () {
+            if ($("input:checkbox:checked").length <= 0)
+                $("#multipleDeleteButton").prop('disabled', true);
+        })()
+
+        function EnableDeleteButton() {
+            if ($("input:checkbox:checked").length > 0)
+                $("#multipleDeleteButton").prop('disabled', false);
+            else
+                $("#multipleDeleteButton").prop('disabled', true);
+        }
+        $("#multipleDeleteButton").click(function () {
+            if (!confirm("Are you sure that you want to delete all the records?"))
+                return;
+            else {
+                var values = (function () {
+                    var a = [];
+                    $(".checkbox:checked").each(function () {
+                        a.push(this.value);
+                    });
+                    return a;
+                })()
+
+                var param = "";
+
+                for (i = 0; i < values.length; i++) {
+                    if (i != values.length) {
+                        param = param + values[i] + ",";
+                    }
+                }
+                var newStr = param.slice(0, param.length - 1);
+
+                console.log(newStr)
+
+                $.ajax({
+                    method: 'GET',
+                    data: {
+                        'data': newStr
+                    },
+                    url: 'multipleDeletePatient.asp',
+                    success: function (data) {
+                        for (i = 0; i < values.length; i++) {
+                            $("#" + values[i]).remove();
                         }
                     }
-                    var newStr = param.slice(0, param.length - 1);
-    
-                    console.log(newStr)
-    
-                    $.ajax({
-                        method: 'GET',
-                        data: {
-                            'data': newStr
-                        },
-                        url: 'multipleDeletePatient.asp',
-                        success: function (data) {
-                            for (i = 0; i < values.length; i++) {
-                                $("#" + values[i]).remove();
-                            }
-                        }
-                    });
-                }
-            })
-        </script>
+                });
+            }
+        })
+        $(".page-link").click(function () {
+            var page = $(this).text();
+            $("#hidden").val(page);
+            //alert( $("#hidden").val())
+            $("#search").submit();
+        })
+
+
+    </script>
 </body>
 
 </html>
