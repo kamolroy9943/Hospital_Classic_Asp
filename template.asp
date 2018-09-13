@@ -1,4 +1,5 @@
 <!--#include file="function.asp" -->
+<!--#include file="populatedoctorList.asp" -->
 
 <%
     fileName = getFileName()

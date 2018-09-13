@@ -1,5 +1,7 @@
 <!--#include file="template.asp" -->
 <!--#include file="function.asp" -->
+<!--#include file="populatedoctorList.asp" -->
+
 <% call CheckSession()%>
 <!DOCTYPE html>
 <html lang="en">
@@ -28,145 +30,99 @@
     <div>
         <% call Template %>
     </div>
-    <%
-    dim query
-    pageNo = Request.QueryString("page")
-    searchValue = Request.Form("search")   
-
-    if(pageNo="")then 
-        pageNo=1
-    End If
-
-    Dim objConn, objRS, sqlString
-
-    set objConn = Server.CreateObject("ADODB.Connection")
-    objConn.Open "Provider=Microsoft.Jet.OLEDB.4.0; Data Source=" & Server.MapPath("hospital.mdb")    
-    set objRS = Server.CreateObject("ADODB.Recordset")
-
-     
-         sqlString= "Select * FROM Doctor"
-      
-    
-    objRS.Open sqlString, objConn
-    aResults = objRS.GetRows()
-    objRS.Close
-    objConn.Close
-    totalRows = Ubound(aResults,2)+1
-    rowPerPage=5
-    totalPageNumber= totalRows/rowPerPage
-    modevalue=  totalRows mod rowPerPage
-    if modevalue > 0 then 
-        totalPageNumber= Int(totalPageNumber) + 1
-    end if   
-    
-    startIndex=(rowPerPage*pageNo)-rowPerPage
-    endIndex=(rowPerPage*pageNo)-1
-    If endIndex>Ubound(aResults,2) Then
-        endIndex=Ubound(aResults,2)
-    End if
-%>
+   
     <div class="container">
+        <div class="p-2 float-right" style="display :flex">
+            <strong>Specialization:</strong>
+            <select class="form-control" name="speciality" id="speciality"  style="    margin-top: -5px;">
+                <%
+                set conn=Server.CreateObject("ADODB.Connection")
+                conn.Open "Provider=Microsoft.Jet.OLEDB.4.0; Data Source=" & Server.MapPath("hospital.mdb")    
+
+                set rs=Server.CreateObject("ADODB.recordset")
+                rs.Open "Select Specialization FROM Doctor", conn
+
+                Do While Not rs.EOF
+            %>
+            <option value="">All Doctors</option>
+                <option value='<%=rs("Specialization")%>'>
+                    <%=rs("Specialization")%>
+                </option>
+                <%
+                rs.movenext
+                Loop
+                rs.close
+            %>
+            </select>
+        </div>
         <table id="myTable" class="table table-border table-hover table-striped">
-            <thead class="thead-dark">
-                <th></th>
-                <th><button type="button" name="multipleDeleteButton" id="multipleDeleteButton" class="btn btn-danger">Delete</button></th>
-                <th>Doctor Name</th>
-                <th>Email</th>
-                <th>Phone No</th>
-                <th>Specialization</th>
-                <th></th>
-                <th></th>
-            </thead>
-            <%For i=startIndex to endIndex%>
-
-            <tr id="<%=aResults(0,i)%>">
-                <td>
-                    <%=i%>
-                </td>
-                <td><input name='checkbox' class='checkbox' type='checkbox' value="<%=aResults(0,i)%>" onclick="return EnableDeleteButton()"></td>
-                <td>
-                    <%Response.Write(aResults(1,i))%>
-                </td>
-                <td>
-                    <%Response.Write(aResults(2,i))%>
-                </td>
-                <td>
-                    <%Response.Write(aResults(3,i))%>
-                </td>
-                <td>
-                    <%Response.Write(aResults(4,i))%>
-                </td>
-
-                <td> <a href='editDoctor.asp?Id=<%=aResults(0,i)%>'>Edit</a></td>
-            </tr>
-            <%
-        Next
-        
-        %>
+                <% call DoctorList %>
         </table>
+        
 
-        <nav aria-label="...">
-            <ul class="pagination">
-                <% For i=1 to totalPageNumber %>
-                <li class="page-item"><a class="page-link" href="doctorList.asp?page=<%=i%>">
-                        <%=i%></a></li>
-                </li>
-                <% next %>
-            </ul>
-        </nav>
-    </div>
-</div>
+    <script>
+        (function () {
+            if ($("input:checkbox:checked").length <= 0)
+                $("#multipleDeleteButton").prop('disabled', true);
+        })()
 
-<script>
-    (function () {
-        if ($("input:checkbox:checked").length <= 0)
-            $("#multipleDeleteButton").prop('disabled', true);
-    })()
+        function EnableDeleteButton() {
+            if ($("input:checkbox:checked").length > 0)
+                $("#multipleDeleteButton").prop('disabled', false);
+            else
+                $("#multipleDeleteButton").prop('disabled', true);
+        }
+        $("#multipleDeleteButton").click(function () {
+            if (!confirm("Are you sure that you want to delete all the records?"))
+                return;
+            else {
+                var values = (function () {
+                    var a = [];
+                    $(".checkbox:checked").each(function () {
+                        a.push(this.value);
+                    });
+                    return a;
+                })()
 
-    function EnableDeleteButton() {
-        if ($("input:checkbox:checked").length > 0)
-            $("#multipleDeleteButton").prop('disabled', false);
-        else
-            $("#multipleDeleteButton").prop('disabled', true);
-    }
-    $("#multipleDeleteButton").click(function () {
-        if (!confirm("Are you sure that you want to delete all the records?"))
-            return;
-        else {
-            var values = (function () {
-                var a = [];
-                $(".checkbox:checked").each(function () {
-                    a.push(this.value);
-                });
-                return a;
-            })()
+                var param = "";
 
-            var param = "";
-
-            for (i = 0; i < values.length; i++) {
-                if (i != values.length) {
-                    param = param + values[i] + ",";
-                }
-            }
-            var newStr = param.slice(0, param.length - 1);
-
-            console.log(newStr)
-
-            $.ajax({
-                method: 'GET',
-                data: {
-                    'data': newStr
-                },
-                url: 'multipleDeleteDoctor.asp',
-                success: function (data) {
-                    for (i = 0; i < values.length; i++) {
-                        $("#" + values[i]).remove();
+                for (i = 0; i < values.length; i++) {
+                    if (i != values.length) {
+                        param = param + values[i] + ",";
                     }
                 }
-            });
-        }
-    })
-</script>
+                var newStr = param.slice(0, param.length - 1);
+
+                console.log(newStr)
+
+                $.ajax({
+                    method: 'GET',
+                    data: {
+                        'data': newStr
+                    },
+                    url: 'multipleDeleteDoctor.asp',
+                    success: function (data) {
+                        for (i = 0; i < values.length; i++) {
+                            $("#" + values[i]).remove();
+                        }
+                    }
+                });
+            }
+        })
+    
+    $("#speciality").change(function(){
+        value= $("#speciality").val();
+
+        $.ajax({
+            method:'GET',
+            url: 'doctorListBySpeciality.asp?value='+value,
+            success:function(data){
+                $("#myTable").html(data)
+            }
+        })
+
+    });
+    </script>
 </body>
 
 </html>
