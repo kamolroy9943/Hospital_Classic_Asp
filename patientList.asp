@@ -38,7 +38,6 @@
     if(pageNo="")then 
         pageNo=1
     End If
-    response.write(pageNo)
 
     Dim objConn, objRS, sqlString
     set objConn = Server.CreateObject("ADODB.Connection")
@@ -80,7 +79,6 @@
 
     
     
-    response.write sqlString
     
     objRS.Open sqlString, objConn
     If objRS.EOF = false Then

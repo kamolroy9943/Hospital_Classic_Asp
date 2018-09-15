@@ -1,7 +1,6 @@
 <!--#include file="template.asp" -->
 <!--#include file="function.asp" -->
 <!--#include file="populatedoctorList.asp" -->
-
 <% call CheckSession()%>
 <!DOCTYPE html>
 <html lang="en">
@@ -22,19 +21,17 @@
         crossorigin="anonymous"></script>
     <script src="customjs.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-
 </head>
 
 <body>
-
     <div>
         <% call Template %>
     </div>
-   
     <div class="container">
         <div class="p-2 float-right" style="display :flex">
             <strong>Specialization:</strong>
-            <select class="form-control" name="speciality" id="speciality"  style="    margin-top: -5px;">
+            <select class="form-control" name="speciality" id="speciality" style="    margin-top: -5px;">
+                <option value="">All Doctors</option>
                 <%
                 set conn=Server.CreateObject("ADODB.Connection")
                 conn.Open "Provider=Microsoft.Jet.OLEDB.4.0; Data Source=" & Server.MapPath("hospital.mdb")    
@@ -44,7 +41,6 @@
 
                 Do While Not rs.EOF
             %>
-            <option value="">All Doctors</option>
                 <option value='<%=rs("Specialization")%>'>
                     <%=rs("Specialization")%>
                 </option>
@@ -56,73 +52,67 @@
             </select>
         </div>
         <table id="myTable" class="table table-border table-hover table-striped">
-                <% call DoctorList %>
+            <% call DoctorList %>
         </table>
-        
+        <script>
+            (function () {
+                if ($("input:checkbox:checked").length <= 0)
+                    $("#multipleDeleteButton").prop('disabled', true);
+            })()
+            function EnableDeleteButton() {
+                if ($("input:checkbox:checked").length > 0)
+                    $("#multipleDeleteButton").prop('disabled', false);
+                else
+                    $("#multipleDeleteButton").prop('disabled', true);
+            }
+            $("#multipleDeleteButton").click(function () {
+                if (!confirm("Are you sure that you want to delete all the records?"))
+                    return;
+                else {
+                    var values = (function () {
+                        var a = [];
+                        $(".checkbox:checked").each(function () {
+                            a.push(this.value);
+                        });
+                        return a;
+                    })()
 
-    <script>
-        (function () {
-            if ($("input:checkbox:checked").length <= 0)
-                $("#multipleDeleteButton").prop('disabled', true);
-        })()
+                    var param = "";
 
-        function EnableDeleteButton() {
-            if ($("input:checkbox:checked").length > 0)
-                $("#multipleDeleteButton").prop('disabled', false);
-            else
-                $("#multipleDeleteButton").prop('disabled', true);
-        }
-        $("#multipleDeleteButton").click(function () {
-            if (!confirm("Are you sure that you want to delete all the records?"))
-                return;
-            else {
-                var values = (function () {
-                    var a = [];
-                    $(".checkbox:checked").each(function () {
-                        a.push(this.value);
-                    });
-                    return a;
-                })()
-
-                var param = "";
-
-                for (i = 0; i < values.length; i++) {
-                    if (i != values.length) {
-                        param = param + values[i] + ",";
-                    }
-                }
-                var newStr = param.slice(0, param.length - 1);
-
-                console.log(newStr)
-
-                $.ajax({
-                    method: 'GET',
-                    data: {
-                        'data': newStr
-                    },
-                    url: 'multipleDeleteDoctor.asp',
-                    success: function (data) {
-                        for (i = 0; i < values.length; i++) {
-                            $("#" + values[i]).remove();
+                    for (i = 0; i < values.length; i++) {
+                        if (i != values.length) {
+                            param = param + values[i] + ",";
                         }
                     }
-                });
-            }
-        })
-    
-    $("#speciality").change(function(){
-        value= $("#speciality").val();
+                    var newStr = param.slice(0, param.length - 1);
 
-        $.ajax({
-            method:'GET',
-            url: 'doctorListBySpeciality.asp?value='+value,
-            success:function(data){
-                $("#myTable").html(data)
-            }
-        })
+                    console.log(newStr)
 
-    });
-    </script>
+                    $.ajax({
+                        method: 'GET',
+                        data: {
+                            'data': newStr
+                        },
+                        url: 'multipleDeleteDoctor.asp',
+                        success: function (data) {
+                            for (i = 0; i < values.length; i++) {
+                                $("#" + values[i]).remove();
+                            }
+                        }
+                    });
+                }
+            })
+            $("#speciality").change(function () {
+                value = $("#speciality").val();
+                $.ajax({
+                    method: 'GET',
+                    url: 'doctorListBySpeciality.asp?value=' + value,
+                    success: function (data) {
+                        $("#myTable").html(data)
+                    }
+                })
+            });
+        </script>
 </body>
 
 </html>

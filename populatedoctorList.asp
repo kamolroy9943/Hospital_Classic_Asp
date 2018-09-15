@@ -88,7 +88,6 @@ End if
         <% next %>
     </ul>
 </nav>
-</div>
-</div>
+ 
 
 <% End Sub %>
