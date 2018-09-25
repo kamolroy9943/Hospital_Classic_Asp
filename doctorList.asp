@@ -37,6 +37,9 @@
                 conn.Open "Provider=Microsoft.Jet.OLEDB.4.0; Data Source=" & Server.MapPath("hospital.mdb")    
 
                 set rs=Server.CreateObject("ADODB.recordset")
+
+                response.write (rs.EOF)
+                
                 rs.Open "Select Specialization FROM Doctor", conn
 
                 Do While Not rs.EOF

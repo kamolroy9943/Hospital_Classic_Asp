@@ -1,0 +1,4 @@
+{"requestError":{"serviceException":{"messageId":"BAD_REQUEST","text":"Bad request"}}}
+
+
+{"messages":[{"to":"8801925160069","status":{"groupId":1,"groupName":"PENDING","id":7,"name":"PENDING_ENROUTE","description":"Message sent to next instance"},"smsCount":1,"messageId":"2377000261293536721"}]}

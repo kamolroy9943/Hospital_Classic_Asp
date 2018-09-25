@@ -49,9 +49,7 @@
                         <a href="doctorList.asp" class="btn btn-info">Back To List</a>
                     </div>
                 </div>
-
         </div>
-
 </body>
 
 </html>
